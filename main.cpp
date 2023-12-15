@@ -1,7 +1,8 @@
 #include "mbed.h"
 #include "CAN.h"
 
-DigitalOut led1(LED1);  // MBED LED
+DigitalOut led1(LED1);  // MBED LED1
+DigitalOut led4(LED4);  // MBED LED4
 DigitalOut pin21(p21);  // Output for external LED and buzzer
 CAN can1(p9, p10);      // CAN pins, CAN port 1
 
@@ -28,7 +29,8 @@ int main() {
                         led1 = 1;
                         pin21 = 1;
                         ledOn = true;
-                        printf("Turning ON LED and Pin 21\n");
+                        led4 = 0;
+                    //    printf("Turning ON LED and Pin 21\n");
                     }
                 } else {
                     if (ledOn) {
@@ -36,11 +38,13 @@ int main() {
                         led1 = 0;
                         pin21 = 0;
                         ledOn = false;
-                        printf("Turning OFF LED and Pin 21\n");
+                        led4 = 0;
+                    //    printf("Turning OFF LED and Pin 21\n");
                     }
                 }
             } else {
              //   printf("Error in received CAN message\n");
+             led4 = 1;
             }
         }
     }
