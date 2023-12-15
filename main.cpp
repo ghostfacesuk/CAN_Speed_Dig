@@ -1,8 +1,8 @@
 #include "mbed.h"
 #include "CAN.h"
 
-DigitalOut led1(LED1);  // Assuming LED is connected to pin LED1
-DigitalOut pin21(p21);  // Assuming pin 21 is connected to p21, adjust based on your hardware
+DigitalOut led1(LED1);  // MBED LED
+DigitalOut pin21(p21);  // Output for external LED and buzzer
 CAN can1(p9, p10);      // CAN pins, CAN port 1
 
 int main() {
@@ -17,7 +17,7 @@ int main() {
             // Check if the message was received without errors
             if (msg.type == CANData && msg.format == CANStandard) {
                 // Extract the 16-bit unsigned integer from bytes 4 and 5 in big-endian format
-                uint16_t canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01;
+                uint16_t canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01852;
 
                 printf("Received CAN message: ID = 0x%X, Value = %u\n", msg.id, canValue);
 
