@@ -19,7 +19,7 @@ int main() {
                 // Extract the 16-bit unsigned integer from bytes 4 and 5 in big-endian format
                 uint16_t canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01852;
 
-                printf("Received CAN message: ID = 0x%X, Value = %u\n", msg.id, canValue);
+             //   printf("Received CAN message: ID = 0x%X, Value = %u\n", msg.id, canValue);
 
                 // Check if the received value is greater than or equal to 60
                 if (canValue >= 60) {
@@ -40,7 +40,7 @@ int main() {
                     }
                 }
             } else {
-                printf("Error in received CAN message\n");
+             //   printf("Error in received CAN message\n");
             }
         }
     }
