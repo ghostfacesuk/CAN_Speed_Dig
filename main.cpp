@@ -18,6 +18,14 @@ void convertTime(uint32_t rawTime, int &hours, int &minutes, float &seconds) {
     seconds = timeInSeconds;
 }
 
+void printCurrentTime(uint32_t rawTime) {
+    int hours, minutes;
+    float seconds;
+    convertTime(rawTime, hours, minutes, seconds);
+
+    pc.printf("Current Time: %02d:%02d:%06.3f\n", hours, minutes, seconds);
+}
+
 int main() {
     printf("CAN Example\n");
 
@@ -28,6 +36,14 @@ int main() {
     uint32_t canTime = 0;
 
     while (1) {
+        // Check for user input
+        if (pc.readable()) {
+            char c = pc.getc();
+            if (c == 't' || c == 'T') {
+                printCurrentTime(canTime);
+            }
+        }
+
         if (can1.read(msg)) {
             if (msg.id == 0x301 && msg.type == CANData && msg.format == CANStandard && msg.len == 8) {
                 // Extract the 24-bit unsigned integer from bytes 1, 2, and 3 in big-endian format
