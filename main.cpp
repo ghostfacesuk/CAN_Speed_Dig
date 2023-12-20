@@ -9,48 +9,31 @@ DigitalOut led4(LED4);  // MBED LED4
 DigitalOut pin21(p21);  // Output for external LED and buzzer
 CAN can1(p9, p10);      // CAN pins, CAN port 1
 
-void convertTime(uint32_t rawTime, int &hours, int &minutes, float &seconds) {
-    float timeInSeconds = static_cast<float>(rawTime) * 0.01;
-    hours = static_cast<int>(timeInSeconds / 3600);
-    timeInSeconds -= hours * 3600;
-    minutes = static_cast<int>(timeInSeconds / 60);
-    timeInSeconds -= minutes * 60;
-    seconds = timeInSeconds;
-}
-
-void printCurrentTime(uint32_t rawTime) {
-    int hours, minutes;
-    float seconds;
-    convertTime(rawTime, hours, minutes, seconds);
-
-    pc.printf("Current Time: %02d:%02d:%06.3f\n", hours, minutes, seconds);
-}
-
 int main() {
-    printf("CAN Example\n");
+    printf("Sync Tester\n");
 
     can1.frequency(500000);
     CANMessage msg;
     bool ledOn = false;
-    uint16_t prevCanValue = 0;
-    uint32_t canTime = 0;
 
     while (1) {
+        
         // Check for user input
         if (pc.readable()) {
             char c = pc.getc();
             if (c == 't' || c == 'T') {
-                printCurrentTime(canTime);
+                // Print "TEST" when the letter "t" is pressed
+                pc.printf("TEST\n");
             }
         }
 
-        if (can1.read(msg)) {
-            if (msg.id == 0x301 && msg.type == CANData && msg.format == CANStandard && msg.len == 8) {
-                // Extract the 24-bit unsigned integer from bytes 1, 2, and 3 in big-endian format
-                canTime = ((uint32_t)msg.data[1] << 16) | ((uint32_t)msg.data[2] << 8) | msg.data[3];
-            } else if (msg.id == 0x302 && msg.type == CANData && msg.format == CANStandard && msg.len == 8) {
+        if (can1.read(msg) && msg.id == 0x302) {
+            // Check if the message was received without errors
+            if (msg.type == CANData && msg.format == CANStandard) {
                 // Extract the 16-bit unsigned integer from bytes 4 and 5 in big-endian format
                 uint16_t canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01852;
+
+             //   printf("Received CAN message: ID = 0x%X, Value = %u\n", msg.id, canValue);
 
                 // Check if the received value is greater than or equal to 60
                 if (canValue >= 60) {
@@ -60,14 +43,7 @@ int main() {
                         pin21 = 1;
                         ledOn = true;
                         led4 = 0;
-
-                        // Convert raw time to HH:MM:SS format
-                        int hours, minutes;
-                        float seconds;
-                        convertTime(canTime, hours, minutes, seconds);
-
-                        // Print the time and speed
-                        pc.printf("Time: %02d:%02d:%06.3f, Speed: %u\n", hours, minutes, seconds, canValue);
+                    //    printf("Turning ON LED and Pin 21\n");
                     }
                 } else {
                     if (ledOn) {
@@ -76,11 +52,12 @@ int main() {
                         pin21 = 0;
                         ledOn = false;
                         led4 = 0;
+                    //    printf("Turning OFF LED and Pin 21\n");
                     }
                 }
             } else {
-                // Print an error message when there is an error in the received CAN message
-                led4 = 1;
+             //   printf("Error in received CAN message\n");
+             led4 = 1;
             }
         }
     }
