@@ -19,7 +19,7 @@ void convertTime(uint32_t rawTime, int &hours, int &minutes, float &seconds) {
 }
 
 int main() {
-    printf("CAN Example\n");
+    printf("CAN Sync Test 1.0.0\n");
 
     can1.frequency(500000);
     CANMessage msg;
