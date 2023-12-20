@@ -19,7 +19,7 @@ void convertTime(uint32_t rawTime, int &hours, int &minutes, float &seconds) {
 }
 
 int main() {
-    printf("CAN Sync Test 1.0.0\n");
+    printf("CAN Sync Test 1.0.0\r\n");
 
     can1.frequency(500000);
     CANMessage msg;
@@ -45,7 +45,7 @@ int main() {
                     convertTime(canTime, hours, minutes, seconds);
 
                     // Print the time, CAN value, and the transition
-                    printf("Time: %02d:%02d:%06.3f, CAN Value Transition: %u\n", hours, minutes, seconds, canValue);
+                    printf("Time: %02d:%02d:%06.3f, CAN Value Transition: %u\r\n", hours, minutes, seconds, canValue);
                 }
 
                 // Check if the received value is greater than or equal to 60
