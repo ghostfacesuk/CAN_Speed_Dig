@@ -16,7 +16,7 @@ void convertTime(uint32_t rawTime, int &hours, int &minutes, float &seconds) {
 }
 
 int main() {
-    printf("CAN Sync Test 1.0.0\r\n");
+    printf("CAN Sync Test 1.0.1\r\n");
 
     can1.frequency(500000);
     CANMessage msg;
@@ -32,7 +32,7 @@ int main() {
             }
             if (msg.id == 0x302 && msg.type == CANData && msg.format == CANStandard && msg.len == 8) {
                 // Extract the 16-bit unsigned integer from bytes 4 and 5 in big-endian format
-                uint16_t canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01852;
+                float canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01852;
 
                 // Check for transitions from below 60 to above 60 or vice versa
                 if ((canValue < 60 && prevCanValue >= 60) || (canValue >= 60 && prevCanValue < 60)) {
@@ -42,7 +42,7 @@ int main() {
                     convertTime(canTime, hours, minutes, seconds);
 
                     // Print the time, CAN value, and the transition
-                    printf("Time: %02d:%02d:%06.3f, CAN Value Transition: %u\r\n", hours, minutes, seconds, canValue);
+                    printf("Time: %02u:%02u:%04u, CAN Value Transition: %04u\r\n", hours, minutes, uint16_t(seconds*1000), uint16_t(canValue*100));
                 }
 
                 // Check if the received value is greater than or equal to 60
