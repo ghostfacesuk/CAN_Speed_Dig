@@ -16,7 +16,7 @@ void convertTime(uint32_t rawTime, int &hours, int &minutes, float &seconds) {
 }
 
 int main() {
-    printf("CAN Sync Test 1.0.1\r\n");
+    printf("CAN Sync Test 1.0.3\r\n");
 
     can1.frequency(500000);
     CANMessage msg;
@@ -34,6 +34,10 @@ int main() {
                 // Extract the 16-bit unsigned integer from bytes 4 and 5 in big-endian format
                 float canValue = ((((uint16_t)msg.data[4]) << 8) | msg.data[5]) * 0.01852;
 
+                // Perform the conversion without using floats
+                uint16_t canValueInteger = canValue;
+                uint16_t canValueDecimal = (float) (canValue - canValueInteger) * 100;
+
                 // Check for transitions from below 60 to above 60 or vice versa
                 if ((canValue < 60 && prevCanValue >= 60) || (canValue >= 60 && prevCanValue < 60)) {
                     // Convert raw time to HH:MM:SS format
@@ -41,8 +45,14 @@ int main() {
                     float seconds;
                     convertTime(canTime, hours, minutes, seconds);
 
+                // Perform the conversion without using floats
+                uint16_t timeInteger = seconds;
+                uint16_t timeDecimal = (float) (seconds - timeInteger) * 100;
+
                     // Print the time, CAN value, and the transition
-                    printf("Time: %02u:%02u:%04u, Speed: %04u\r\n", hours, minutes, uint16_t(seconds*1000), uint16_t(canValue*100));
+                    printf("Time: %02u:%02u:%02u.%02u, Speed: %02u.%02u\r\n", hours, minutes, timeInteger, timeDecimal, canValueInteger, canValueDecimal);
+                    //printf("TEST Speed: %02u.%02u\r\n", canValueInteger, canValueDecimal); 
+                    //printf("TEST Time: %02u.%02u\r\n", timeInteger, timeDecimal);
                 }
 
                 // Check if the received value is greater than or equal to 60
