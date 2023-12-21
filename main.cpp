@@ -1,8 +1,5 @@
 #include "mbed.h"
 #include "CAN.h"
-// #include <USBSerial.h>
-
-// USBSerial pc;  // USB serial port
 
 DigitalOut led1(LED1);  // MBED LED1
 DigitalOut led4(LED4);  // MBED LED4
@@ -70,7 +67,7 @@ int main() {
                 prevCanValue = canValue; // Update previous CAN value
             } else {
                 // Print an error message when there is an error in the received CAN message
-                led4 = 1;
+                // led4 = 1;
             }
         }
     }
