@@ -42,7 +42,7 @@ int main() {
                     convertTime(canTime, hours, minutes, seconds);
 
                     // Print the time, CAN value, and the transition
-                    printf("Time: %02u:%02u:%04u, CAN Value Transition: %04u\r\n", hours, minutes, uint16_t(seconds*1000), uint16_t(canValue*100));
+                    printf("Time: %02u:%02u:%04u, Speed: %04u\r\n", hours, minutes, uint16_t(seconds*1000), uint16_t(canValue*100));
                 }
 
                 // Check if the received value is greater than or equal to 60
